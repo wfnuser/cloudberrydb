@@ -8,7 +8,7 @@
 --
 
 -- Test AO table.
-CREATE TABLE ao_sparse (id int) with(appendonly = true) DISTRIBUTED BY (id);
+CREATE TABLE ao_sparse (id int) with(appendonly = true);
 
 1: begin;
 2: begin;
@@ -42,7 +42,7 @@ CREATE INDEX idx_ao_sparse_id ON ao_sparse USING bitmap (id);
 
 
 -- Test AOCS table.
-CREATE TABLE aocs_sparse (id int) with(appendonly = true, orientation = COLUMN) DISTRIBUTED BY (id);
+CREATE TABLE aocs_sparse (id int) with(appendonly = true, orientation = COLUMN);
 
 1: begin;
 2: begin;
