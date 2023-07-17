@@ -5626,6 +5626,14 @@ ExistingIndex:   USING INDEX name					{ $$ = $3; }
 
 DistributedBy:   DISTRIBUTED BY  '(' distributed_by_list ')'
 			{
+				/*
+				 * We only forbid it in singlenode so that the isolation test using utility mode can
+				 * accept DISTRIBUTED BY grammer as before.
+				 */
+				if (GP_ROLE_SINGLENODE == Gp_role)
+					ereport(ERROR,
+							(errcode(ERRCODE_SYNTAX_ERROR),
+								errmsg("DISTRIBUTED BY clause is not allowed in singlenode mode")));
 				DistributedBy *distributedBy = makeNode(DistributedBy);
 				distributedBy->ptype = POLICYTYPE_PARTITIONED;
 				distributedBy->numsegments = -1;
@@ -5634,6 +5642,10 @@ DistributedBy:   DISTRIBUTED BY  '(' distributed_by_list ')'
 			}
 			| DISTRIBUTED RANDOMLY
 			{
+				if (GP_ROLE_SINGLENODE == Gp_role)
+					ereport(ERROR,
+							(errcode(ERRCODE_SYNTAX_ERROR),
+								errmsg("DISTRIBUTED BY clause is not allowed in singlenode mode")));
 				DistributedBy *distributedBy = makeNode(DistributedBy);
 				distributedBy->ptype = POLICYTYPE_PARTITIONED;
 				distributedBy->numsegments = -1;
@@ -5642,6 +5654,10 @@ DistributedBy:   DISTRIBUTED BY  '(' distributed_by_list ')'
 			}
 			| DISTRIBUTED REPLICATED
 			{
+				if (GP_ROLE_SINGLENODE == Gp_role)
+					ereport(ERROR,
+							(errcode(ERRCODE_SYNTAX_ERROR),
+								errmsg("DISTRIBUTED BY clause is not allowed in singlenode mode")));
 				DistributedBy *distributedBy = makeNode(DistributedBy);
 				distributedBy->ptype = POLICYTYPE_REPLICATED;
 				distributedBy->numsegments = -1;
@@ -16736,6 +16752,10 @@ scatter_clause:
 table_value_select_clause:
 		SelectStmt scatter_clause
 		{
+			if (IS_UTILITY_OR_SINGLENODE(Gp_role))
+					ereport(ERROR,
+							(errcode(ERRCODE_SYNTAX_ERROR),
+								errmsg("SCATTER BY clause is not allowed in utility mode or singlenode mode")));
 			SelectStmt	*s	 = (SelectStmt *) $1;
 			s->scatterClause = $2;
 			$$ = (Node *) s;

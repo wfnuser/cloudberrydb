@@ -31,6 +31,7 @@ all: refint$(DLSUFFIX) autoinc$(DLSUFFIX) regress.so
 
 clean distclean:
 	rm -f refint$(DLSUFFIX)
+	rm -f autoinc$(DLSUFFIX)
 	rm -f regress.so
 
 ##

@@ -610,7 +610,8 @@ ExecuteGrantStmt(GrantStmt *stmt)
 	 * To make that a little bit less confusing, emit a NOTICE, when
 	 * REVOKE find no permissions to remove.
 	 */
-	if (!revoked_something && !stmt->is_grant && Gp_role == GP_ROLE_DISPATCH)
+	/* SINGLENODE: apparently, we don't need grant in utility mode. */
+	if (!revoked_something && !stmt->is_grant && (Gp_role == GP_ROLE_DISPATCH || Gp_role == GP_ROLE_SINGLENODE))
 	{
 		ereport(NOTICE,
 				(errcode(ERRCODE_WARNING_PRIVILEGE_NOT_REVOKED),

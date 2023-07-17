@@ -1,0 +1,8 @@
+-- This file contains global patterns of messages that should be ignored or
+-- masked out, when comparing test results with the expected output.
+-- Individual tests can contain additional patterns specific to the test.
+
+-- start_matchsubs
+m/ERROR:  internal error: demoprot called with a different protocol.*/
+s/ERROR:  internal error: demoprot called with a different protocol.*/ERROR:  internal error: demoprot called with a different protocol (demoprot_new) (gpextprotocol.c:XXX)/
+-- end_matchsubs

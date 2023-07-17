@@ -155,7 +155,7 @@ CreateSharedMemoryAndSemaphores(void)
 		size = add_size(size, LockShmemSize());
 		size = add_size(size, PredicateLockShmemSize());
 
-		if (IsResQueueEnabled() && Gp_role == GP_ROLE_DISPATCH)
+		if (IsResQueueEnabled() && (Gp_role == GP_ROLE_DISPATCH || Gp_role == GP_ROLE_SINGLENODE))
 		{
 			size = add_size(size, ResSchedulerShmemSize());
 			size = add_size(size, ResPortalIncrementShmemSize());
@@ -164,7 +164,7 @@ CreateSharedMemoryAndSemaphores(void)
 			size = add_size(size, ResGroupShmemSize());
 		size = add_size(size, SharedSnapshotShmemSize());
 #ifdef USE_INTERNAL_FTS
-		if (Gp_role == GP_ROLE_DISPATCH || Gp_role == GP_ROLE_UTILITY)
+		if (Gp_role == GP_ROLE_DISPATCH || IS_UTILITY_OR_SINGLENODE(Gp_role))
 			size = add_size(size, FtsShmemSize());
 #endif
 		size = add_size(size, ProcGlobalShmemSize());
@@ -303,7 +303,7 @@ CreateSharedMemoryAndSemaphores(void)
 	SUBTRANSShmemInit();
 	MultiXactShmemInit();
 #ifdef USE_INTERNAL_FTS
-	if (Gp_role == GP_ROLE_DISPATCH || Gp_role == GP_ROLE_UTILITY)
+	if (Gp_role == GP_ROLE_DISPATCH || IS_UTILITY_OR_SINGLENODE(Gp_role))
 		FtsShmemInit();
 #endif
 	tmShmemInit();

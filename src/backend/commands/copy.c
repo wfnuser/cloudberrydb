@@ -775,7 +775,8 @@ ProcessCopyOptions(ParseState *pstate,
 
 			opts_out->sreh = (SingleRowErrorDesc *) defel->arg;
 		}
-		else if (strcmp(defel->defname, "on_segment") == 0)
+		/* copy on segment only is not supported in utility mode. */
+		else if (strcmp(defel->defname, "on_segment") == 0 && Gp_role != GP_ROLE_UTILITY && Gp_role != GP_ROLE_SINGLENODE)
 		{
 			if (opts_out->on_segment)
 				ereport(ERROR,

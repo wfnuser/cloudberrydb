@@ -5,6 +5,8 @@ REGRESS = setup exttableext
 PG_CPPFLAGS = -I$(libpq_srcdir)
 PG_LIBS = $(libpq_pgport)
 
+REGRESS_OPTS = --init-file=init_file
+
 ifdef USE_PGXS
 PG_CONFIG = pg_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
