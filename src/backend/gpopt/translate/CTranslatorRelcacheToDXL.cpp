@@ -837,6 +837,9 @@ CTranslatorRelcacheToDXL::RetrieveIndex(CMemoryPool *mp,
 		case GIST_AM_OID:
 			index_type = IMDIndex::EmdindGist;
 			break;
+		case HASH_AM_OID:
+			index_type = IMDIndex::EmdindHash;
+			break;
 		default:
 			GPOS_RAISE(gpdxl::ExmaMD, gpdxl::ExmiMDObjUnsupported,
 					   GPOS_WSZ_LIT("Index access method"));
@@ -2688,7 +2691,8 @@ CTranslatorRelcacheToDXL::IsIndexSupported(Relation index_rel)
 			BITMAP_AM_OID == index_rel->rd_rel->relam ||
 			GIST_AM_OID == index_rel->rd_rel->relam ||
 			GIN_AM_OID == index_rel->rd_rel->relam ||
-			BRIN_AM_OID == index_rel->rd_rel->relam);
+			BRIN_AM_OID == index_rel->rd_rel->relam ||
+			HASH_AM_OID == index_rel->rd_rel->relam);
 }
 
 //---------------------------------------------------------------------------

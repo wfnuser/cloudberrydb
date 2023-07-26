@@ -2140,6 +2140,11 @@ CXformUtils::FIndexApplicable(CMemoryPool *mp, const IMDIndex *pmdindex,
 	{
 		// continue, Btree indexes on AO tables can be treated as Bitmap tables
 	}
+	// Hash can match either Btree or Bitmap indexes
+	else if (pmdindex->IndexType() == IMDIndex::EmdindHash)
+	{
+		// continue
+	}
 	else if (
 		(emdindtype != pmdindex->IndexType() &&
 		 altindtype !=

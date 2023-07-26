@@ -507,6 +507,7 @@ enum Edxltoken
 	EdxltokenIndexTypeBitmap,
 	EdxltokenIndexTypeGist,
 	EdxltokenIndexTypeGin,
+	EdxltokenIndexTypeHash,
 	EdxltokenIndexItemType,
 
 	EdxltokenOpfamily,
