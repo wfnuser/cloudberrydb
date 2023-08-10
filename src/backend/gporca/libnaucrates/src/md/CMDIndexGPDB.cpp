@@ -9,6 +9,9 @@
 //		Implementation of the class for representing metadata indexes
 //---------------------------------------------------------------------------
 
+extern "C" {
+#include "access/amorca.h"
+}
 
 #include "naucrates/md/CMDIndexGPDB.h"
 
@@ -39,7 +42,8 @@ CMDIndexGPDB::CMDIndexGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
 						   ULongPtrArray *included_cols_array,
 						   IMdIdArray *mdid_opfamilies_array,
 						   IMDPartConstraint *mdpart_constraint,
-						   IMdIdArray *child_index_oids)
+						   IMdIdArray *child_index_oids,
+						   AmOrcaCostEstimateFunc orcacostestimate)
 	: m_mp(mp),
 	  m_mdid(mdid),
 	  m_mdname(mdname),
@@ -51,7 +55,8 @@ CMDIndexGPDB::CMDIndexGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
 	  m_included_cols_array(included_cols_array),
 	  m_mdid_opfamilies_array(mdid_opfamilies_array),
 	  m_mdpart_constraint(mdpart_constraint),
-	  m_child_index_oids(child_index_oids)
+	  m_child_index_oids(child_index_oids),
+	  m_orcacostestimate(orcacostestimate)
 {
 	GPOS_ASSERT(mdid->IsValid());
 	GPOS_ASSERT(IMDIndex::EmdindSentinel > index_type);
@@ -71,6 +76,29 @@ CMDIndexGPDB::CMDIndexGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
 
 	m_dxl_str = CDXLUtils::SerializeMDObj(
 		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+}
+
+//---------------------------------------------------------------------------
+//	@function:
+//		CMDIndexGPDB::CMDIndexGPDB
+//
+//	@doc:
+//		Constructor
+//
+//---------------------------------------------------------------------------
+CMDIndexGPDB::CMDIndexGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
+						   BOOL is_clustered, BOOL is_partitioned,
+						   EmdindexType index_type, IMDId *mdid_item_type,
+						   ULongPtrArray *index_key_cols_array,
+						   ULongPtrArray *included_cols_array,
+						   IMdIdArray *mdid_opfamilies_array,
+						   IMDPartConstraint *mdpart_constraint,
+						   IMdIdArray *child_index_oids)
+	: CMDIndexGPDB(mp, mdid, mdname, is_clustered, is_partitioned, index_type,
+				   mdid_item_type, index_key_cols_array, included_cols_array,
+				   mdid_opfamilies_array, mdpart_constraint, child_index_oids,
+				   nullptr)
+{
 }
 
 //---------------------------------------------------------------------------
@@ -446,6 +474,12 @@ IMdIdArray *
 CMDIndexGPDB::ChildIndexMdids() const
 {
 	return m_child_index_oids;
+}
+
+AmOrcaCostEstimateFunc
+CMDIndexGPDB::OrcaCostEsitmate() const
+{
+	return m_orcacostestimate;
 }
 
 

@@ -1450,6 +1450,44 @@ CCostModelGPDB::CostSequenceProject(CMemoryPool *mp, CExpressionHandle &exprhdl,
 	return costLocal + costChild;
 }
 
+CCost
+CCostModelGPDB::CostUserDefinedIndex(CMemoryPool *,  // mp
+							  CExpressionHandle &exprhdl,
+							  const CCostModelGPDB *pcmgpdb,
+							  const SCostingInfo *pci,
+							  AmOrcaCostEstimateFunc cef)
+{
+	COperator *pop = exprhdl.Pop();
+	CostInfo ci;
+
+	/* ORCA_AM_TODO: the way to get table width is currently related to pop. */
+	ci.dTableWidth =
+		CPhysicalScan::PopConvert(pop)->PstatsBaseTable()->Width().Get();
+
+	ci.dIndexFilterCostUnit =
+		pcmgpdb->GetCostModelParams()
+			->PcpLookup(CCostModelParamsGPDB::EcpIndexFilterCostUnit)
+			->Get().Get();
+	ci.dIndexScanTupCostUnit =
+		pcmgpdb->GetCostModelParams()
+			->PcpLookup(CCostModelParamsGPDB::EcpIndexScanTupCostUnit)
+			->Get().Get();
+	ci.dIndexScanTupRandomFactor =
+		pcmgpdb->GetCostModelParams()
+			->PcpLookup(CCostModelParamsGPDB::EcpIndexScanTupRandomFactor)
+			->Get().Get();
+
+	GPOS_ASSERT(0 < ci.dIndexFilterCostUnit);
+	GPOS_ASSERT(0 < ci.dIndexScanTupCostUnit);
+	GPOS_ASSERT(0 < ci.dIndexScanTupRandomFactor);
+
+	ci.dRowsIndex = pci->Rows();
+	ci.dNumRebinds = pci->NumRebinds();
+
+	ci.ulIndexKeys = CPhysicalIndexScan::PopConvert(pop)->Pindexdesc()->Keys();
+
+	return CCost(cef(&ci));
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -1944,6 +1982,17 @@ CCostModelGPDB::Cost(
 	if (FUnary(op_id))
 	{
 		return CostUnary(m_mp, exprhdl, pci, m_cost_model_params);
+	}
+
+	if (op_id == COperator::EopPhysicalIndexScan)
+	{
+		CPhysicalIndexScan *pop = (CPhysicalIndexScan*) exprhdl.Pop();
+		CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+		const IMDIndex *pmdindex = md_accessor->RetrieveIndex(pop->Pindexdesc()->MDId());
+		if (pmdindex->OrcaCostEsitmate() != NULL)
+		{
+			return CostUserDefinedIndex(m_mp, exprhdl, this, pci, pmdindex->OrcaCostEsitmate());
+		}
 	}
 
 	switch (op_id)

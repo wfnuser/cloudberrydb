@@ -143,6 +143,7 @@ brinhandler(PG_FUNCTION_ARGS)
 	amroutine->amestimateparallelscan = NULL;
 	amroutine->aminitparallelscan = NULL;
 	amroutine->amparallelrescan = NULL;
+	amroutine->amorcacostestimate = NULL;
 
 	PG_RETURN_POINTER(amroutine);
 }

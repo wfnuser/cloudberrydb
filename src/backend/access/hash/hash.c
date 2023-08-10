@@ -100,8 +100,17 @@ hashhandler(PG_FUNCTION_ARGS)
 	amroutine->amestimateparallelscan = NULL;
 	amroutine->aminitparallelscan = NULL;
 	amroutine->amparallelrescan = NULL;
+	amroutine->amorcacostestimate = hashorcacostestimate;
 
 	PG_RETURN_POINTER(amroutine);
+}
+
+double
+hashorcacostestimate(CostInfo* ci)
+{
+	double dCostPerIndexRow = ci->dTableWidth * ci->dIndexScanTupCostUnit;
+	return ci->dNumRebinds *
+				 (ci->dRowsIndex * dCostPerIndexRow);
 }
 
 /*

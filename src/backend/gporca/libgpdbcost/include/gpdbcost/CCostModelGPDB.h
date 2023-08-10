@@ -11,6 +11,10 @@
 #ifndef GPDBCOST_CCostModelGPDB_H
 #define GPDBCOST_CCostModelGPDB_H
 
+extern "C" {
+#include "access/amorca.h"
+}
+
 #include "gpos/base.h"
 #include "gpos/common/CDouble.h"
 
@@ -194,6 +198,12 @@ private:
 	// cost of bitmap scan when the NDV is large
 	static CCost CostBitmapLargeNDV(const CCostModelGPDB *pcmgpdb,
 									const SCostingInfo *pci, CDouble dNDV);
+
+	static CCost CostUserDefinedIndex(CMemoryPool *mp,  // mp
+							  		  CExpressionHandle &exprhdl,
+							  		  const CCostModelGPDB *pcmgpdb,
+							  		  const SCostingInfo *pci,
+							  		  AmOrcaCostEstimateFunc cef);
 
 public:
 	// ctor

@@ -13,6 +13,7 @@
 #define AMAPI_H
 
 #include "access/genam.h"
+#include "access/amorca.h"
 
 /*
  * We don't wish to include planner header files here, since most of an index
@@ -280,6 +281,9 @@ typedef struct IndexAmRoutine
 	amestimateparallelscan_function amestimateparallelscan; /* can be NULL */
 	aminitparallelscan_function aminitparallelscan; /* can be NULL */
 	amparallelrescan_function amparallelrescan; /* can be NULL */
+
+	/* third-party am cost estimate functions */
+	AmOrcaCostEstimateFunc amorcacostestimate; /* can be NULL */
 } IndexAmRoutine;
 
 

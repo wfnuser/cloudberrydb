@@ -385,6 +385,7 @@ extern void hashadjustmembers(Oid opfamilyoid,
 							  List *operators,
 							  List *functions);
 
+extern double hashorcacostestimate(CostInfo* a);
 /* private routines */
 
 /* hashinsert.c */

@@ -14,6 +14,10 @@
 #ifndef GPMD_IMDIndex_H
 #define GPMD_IMDIndex_H
 
+extern "C" {
+#include "access/amorca.h"
+}
+
 #include "gpos/base.h"
 
 #include "naucrates/md/IMDCacheObject.h"
@@ -96,6 +100,8 @@ public:
 
 	// child index oids
 	virtual IMdIdArray *ChildIndexMdids() const = 0;
+
+	virtual AmOrcaCostEstimateFunc OrcaCostEsitmate() const = 0;
 
 	// index type as a string value
 	static const CWStringConst *GetDXLStr(EmdindexType index_type);

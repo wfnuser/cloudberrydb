@@ -17,6 +17,7 @@
 #define REL_H
 
 #include "fmgr.h"
+#include "access/amorca.h"
 #include "access/tupdesc.h"
 #include "access/xlog.h"
 #include "catalog/pg_appendonly.h"

@@ -143,6 +143,7 @@ bthandler(PG_FUNCTION_ARGS)
 	amroutine->amestimateparallelscan = btestimateparallelscan;
 	amroutine->aminitparallelscan = btinitparallelscan;
 	amroutine->amparallelrescan = btparallelrescan;
+	amroutine->amorcacostestimate = NULL;
 
 	PG_RETURN_POINTER(amroutine);
 }

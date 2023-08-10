@@ -16,6 +16,7 @@
 extern "C" {
 #include "postgres.h"
 
+#include "access/amapi.h"
 #include "access/external.h"
 #include "access/heapam.h"
 #include "catalog/namespace.h"
@@ -891,7 +892,8 @@ CTranslatorRelcacheToDXL::RetrieveIndex(CMemoryPool *mp,
 		mp, mdid_index, mdname, index_clustered, index_partitioned, index_type,
 		mdid_item_type, index_key_cols_array, included_cols, op_families_mdids,
 		nullptr,  // mdpart_constraint
-		child_index_oids);
+		child_index_oids,
+		index_rel->rd_indam->amorcacostestimate);
 
 	GPOS_DELETE_ARRAY(attno_mapping);
 	return index;
