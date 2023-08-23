@@ -16,6 +16,7 @@
 
 #include "gpos/base.h"
 
+#include "naucrates/md/CMDIdGPDB.h"
 #include "naucrates/md/IMDIndex.h"
 
 namespace gpmd
@@ -102,6 +103,18 @@ public:
 				 IMDPartConstraint *mdpart_constraint,
 				 IMdIdArray *child_index_oids,
 				 AmOrcaCostEstimateFunc orcacostestimate);
+
+	// ctor
+	CMDIndexGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
+				 BOOL is_clustered, BOOL is_partitioned,
+				 EmdindexType index_type, IMDId *mdid_item_type,
+				 ULongPtrArray *index_key_cols_array,
+				 ULongPtrArray *included_cols_array,
+				 IMdIdArray *mdid_opfamilies_array,
+				 IMDPartConstraint *mdpart_constraint,
+				 IMdIdArray *child_index_oids,
+				 AmOrcaCostEstimateFunc orcacostestimate,
+				 IMDId *amhandler);
 
 	// dtor
 	~CMDIndexGPDB() override;

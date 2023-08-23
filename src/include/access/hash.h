@@ -358,6 +358,8 @@ typedef struct HashOptions
 
 /* public routines */
 
+extern Datum hashhandler(PG_FUNCTION_ARGS);
+
 extern IndexBuildResult *hashbuild(Relation heap, Relation index,
 								   struct IndexInfo *indexInfo);
 extern void hashbuildempty(Relation index);

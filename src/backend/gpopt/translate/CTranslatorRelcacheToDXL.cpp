@@ -70,6 +70,8 @@ extern "C" {
 #include "naucrates/md/CMDTypeInt8GPDB.h"
 #include "naucrates/md/CMDTypeOidGPDB.h"
 
+#include "gpopt/utils/CAccessMethodRegistry.h"
+
 using namespace gpdxl;
 using namespace gpopt;
 
@@ -887,13 +889,15 @@ CTranslatorRelcacheToDXL::RetrieveIndex(CMemoryPool *mp,
 	{
 		child_index_oids = GPOS_NEW(mp) IMdIdArray(mp);
 	}
+	
+	AmOrcaCostEstimateFunc func = gpos::CAccessMethodRegistry::GetCostEstimateFunction(index_rel->rd_amhandler);
 
 	CMDIndexGPDB *index = GPOS_NEW(mp) CMDIndexGPDB(
 		mp, mdid_index, mdname, index_clustered, index_partitioned, index_type,
 		mdid_item_type, index_key_cols_array, included_cols, op_families_mdids,
 		nullptr,  // mdpart_constraint
 		child_index_oids,
-		index_rel->rd_indam->amorcacostestimate);
+		func);
 
 	GPOS_DELETE_ARRAY(attno_mapping);
 	return index;
